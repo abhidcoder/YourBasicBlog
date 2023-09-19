@@ -6,7 +6,14 @@ export async function POST(request) {
   try {
     const { email, password } = request.body;
 
-    // Perform validation on email and password here if needed
+    // Check if the user with the given email already exists
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return NextResponse.error("User with this email already exists", {
+        status: 409, // Conflict status code
+      });
+    }
 
     // Create a new user
     const newUser = new User({ email, password });
@@ -23,4 +30,3 @@ export async function POST(request) {
     return NextResponse.error("Internal Server Error", { status: 500 });
   }
 }
-
